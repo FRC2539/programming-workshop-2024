@@ -40,7 +40,9 @@ public class RobotContainer {
     // Put any trigger->command mappings here.
 
     // Run motor when B is pressed
-    /* TODO: Write code */
+    m_driverController.getB().whileTrue(
+      m_driveSubsystem.runMotorCommand()
+    );
   }
 
   /**
