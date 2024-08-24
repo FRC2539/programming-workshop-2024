@@ -4,27 +4,17 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
   /** Creates a new SparkMax brushless motor */
-  CANSparkMax motor = new CANSparkMax(0, CANSparkMax.MotorType.kBrushless);
+  // TODO: Add motor
   
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {}
 
   /** Run motor at half speed during command */
-  public Command runMotorCommand() {
-    return runEnd(
-        () -> {
-          motor.set(0.5);
-        }, () -> {
-          motor.set(0);
-        });
-  }
+  // TODO: Add command
 
   @Override
   public void periodic() {
