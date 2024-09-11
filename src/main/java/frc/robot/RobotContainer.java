@@ -7,10 +7,13 @@ package frc.robot;
 import frc.robot.subsystems.DriveSubsystemSparkMAX;
 import frc.robot.subsystems.DriveSubsystemTalonFX;
 import frc.robot.subsystems.DriveSubsystemTalonSRX;
+
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -39,24 +42,40 @@ public class RobotContainer {
   private void configureBindings() {
     // Put any trigger->command mappings here.
 
-    // FIXME - comment out the examples you don't want
+    // FIXME - Uncomment the correct class for your purposes
 
-    // Run motor when button is pressed
-    new JoystickButton(m_joystick, 1)
-      .whileTrue(m_driveSubsystem.runMotorCommand());
+    // Initialize left and right joysticks
+    Joystick leftJoystick = new Joystick(0);
+    Joystick rightJoystick = new Joystick(1);
 
-    // Run motor when button is pressed and sensor is active
-    new JoystickButton(m_joystick, 1)
-      .and(() -> m_driveSubsystem.isSensorActive())
-      .whileTrue(m_driveSubsystem.runMotorCommand());
+    // Set up DoubleSuppliers for left and right joystick axes
+    DoubleSupplier leftAxis = () -> leftJoystick.getRawAxis(0);
+    DoubleSupplier rightAxis = () -> rightJoystick.getRawAxis(0);
 
-    // Run a motor at the speed of the joystick
-    m_driveSubsystem.setDefaultCommand(
-      Commands.run(
-        () -> m_driveSubsystem.setRawMotorSpeed(m_joystick.getRawAxis(0)),
-        m_driveSubsystem
-      )
+    // Create a tank drive command based on the left and right axes
+    Command tankDriveCommand = m_driveSubsystem.tankDriveCommand(leftAxis, rightAxis);
+
+    // Set the tank drive command as the default command for the drive subsystem
+    m_driveSubsystem.setDefaultCommand(tankDriveCommand);
+
+    // Set up DoubleSuppliers for drive and turn axes
+    DoubleSupplier driveAxis = () -> leftJoystick.getRawAxis(0);
+    DoubleSupplier turnAxis = () -> -rightJoystick.getRawAxis(1);
+
+    // Create an arcade drive command based on the drive and turn axes
+    Command arcadeDriveCommand = m_driveSubsystem.arcadeDriveCommand(driveAxis, turnAxis);
+
+    // Create a toggle switch to use Arcade Drive
+    Trigger useArcadeDriveButton = new JoystickButton(leftJoystick, 1);
+    useArcadeDriveButton.toggleOnTrue(arcadeDriveCommand);
+
+    // Create a button to run a quickturn
+    Trigger quickTurn = new JoystickButton(leftJoystick, 2);
+    quickTurn.whileTrue(
+      // Run the quickturn with a speed of 0.5 for the left and -0.5 on the right
+      m_driveSubsystem.tankDriveCommand(() -> 0.5, () -> -0.5).withTimeout(1) // (but timeout after 1 second)
     );
+
   }
 
   

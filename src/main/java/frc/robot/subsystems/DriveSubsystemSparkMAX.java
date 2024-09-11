@@ -4,46 +4,64 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystemSparkMAX extends SubsystemBase {
-  /** Creates a new Digital Sensor */
-  DigitalInput m_proximitySensor;
-
   /** Creates a new SparkMax brushless motor */
-  CANSparkMax m_motor;
+  private CANSparkMax m_leftLeaderMotor;
+  private CANSparkMax m_leftFollowerMotor;
+  private CANSparkMax m_rightLeaderMotor;
+  private CANSparkMax m_rightFollowerMotor;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystemSparkMAX() {
-    m_proximitySensor = new DigitalInput(0);
     // FIXME - If the motor is brushless, use `MotorType.kBrushless`. If the motor is brushed, use `MotorType.kBrushed`
     MotorType motorType = MotorType.kBrushless;
-    m_motor = new CANSparkMax(0, motorType);
+
+    m_leftLeaderMotor = new CANSparkMax(0, motorType);
+    m_leftFollowerMotor = new CANSparkMax(1, motorType);
+    m_rightLeaderMotor = new CANSparkMax(2, motorType);
+    m_rightFollowerMotor = new CANSparkMax(3, motorType);
+
+    // FIXME - Set the followers to follow the leader
+    m_leftFollowerMotor.follow(m_leftLeaderMotor, false);
+    m_rightFollowerMotor.follow(m_rightLeaderMotor, false);
+
+    // FIXME - Invert the motors as necessary
+    m_leftLeaderMotor.setInverted(true);
+    m_rightLeaderMotor.setInverted(true);
   }
 
-  /** Run motor at half speed during command */
-  public Command runMotorCommand() {
-    return runEnd(
-      () -> m_motor.set(0.5), 
-      () -> m_motor.stopMotor()
-    );
+  /** Creates a command which drives the left side based on the left joystick and the right side based on the right joystick. */
+  public Command tankDriveCommand(DoubleSupplier leftAxis, DoubleSupplier rightAxis) {
+    return run(() -> {
+      setDriveSpeeds(leftAxis.getAsDouble(), rightAxis.getAsDouble());
+    });
   }
+
+  /** Creates a command which drives based on the drive axis with added turn based on the turn axis. */
+  public Command arcadeDriveCommand(DoubleSupplier driveAxis, DoubleSupplier turnAxis) {
+    return run(() -> {
+      double leftPercent = driveAxis.getAsDouble() + turnAxis.getAsDouble();
+      double rightPercent = driveAxis.getAsDouble() - turnAxis.getAsDouble();
+      setDriveSpeeds(leftPercent, rightPercent);
+    });
+  }
+
+  /** Directly set motor speeds */
+  public void setDriveSpeeds(double leftPercent, double rightPercent) {
+    m_leftLeaderMotor.set(leftPercent);
+    m_rightLeaderMotor.set(rightPercent);
+  } 
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-  }
-
-  public boolean isSensorActive() {
-    return m_proximitySensor.get();
-  }
-
-  public void setRawMotorSpeed(double speed) {
-    m_motor.set(speed);
   }
 }
