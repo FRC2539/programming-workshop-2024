@@ -10,9 +10,8 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class DriveSubsystemTalonFX extends SubsystemBase {
+public class DriveSubsystemTalonFX extends DriveSubsystem {
   /** Creates a new SparkMax brushless motor */
   private TalonFX m_leftLeaderMotor;
   private TalonFX m_leftFollowerMotor;

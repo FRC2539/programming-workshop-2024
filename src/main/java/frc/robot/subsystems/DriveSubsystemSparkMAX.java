@@ -10,9 +10,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class DriveSubsystemSparkMAX extends SubsystemBase {
+// this would usually extend SubsystemBase, im just doing this so that the comands work with multiple subsystems
+public class DriveSubsystemSparkMAX extends DriveSubsystem {
   /** Creates a new SparkMax brushless motor */
   private CANSparkMax m_leftLeaderMotor;
   private CANSparkMax m_leftFollowerMotor;

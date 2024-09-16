@@ -4,12 +4,15 @@
 
 package frc.robot;
 
+import frc.robot.commands.AimAtLimelightCommand;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.DriveSubsystemSparkMAX;
 import frc.robot.subsystems.DriveSubsystemTalonFX;
 import frc.robot.subsystems.DriveSubsystemTalonSRX;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -24,9 +27,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   // FIXME - Uncomment the correct class for your purposes
-  private final DriveSubsystemSparkMAX m_driveSubsystem = new DriveSubsystemSparkMAX();
-  // private final DriveSubsystemTalonFX m_driveSubsystem = new DriveSubsystemTalonFX();
-  // private final DriveSubsystemTalonSRX m_driveSubsystem = new DriveSubsystemTalonSRX();
+  private final DriveSubsystem m_driveSubsystem = new DriveSubsystemSparkMAX();
+  // private final DriveSubsystem m_driveSubsystem = new DriveSubsystemTalonFX();
+  // private final DriveSubsystem m_driveSubsystem = new DriveSubsystemTalonSRX();
 
   // Creates the Joystick controller to drive the robot
   Joystick m_joystick = new Joystick(0);
@@ -76,6 +79,17 @@ public class RobotContainer {
       m_driveSubsystem.tankDriveCommand(() -> 0.5, () -> -0.5).withTimeout(1) // (but timeout after 1 second)
     );
 
+    final int targetId = 1;
+    final String limelightName = "limelight";
+
+    PIDController pidController = new PIDController(0.1, 0.0, 0.0);
+    pidController.setSetpoint(0);
+    pidController.setTolerance(2);
+
+    Command aimAtLimelightCommand = new AimAtLimelightCommand(m_driveSubsystem);
+
+    Trigger aimAtLimelightButton = new JoystickButton(leftJoystick, 3);
+    aimAtLimelightButton.whileTrue(aimAtLimelightCommand);
   }
 
   

@@ -10,9 +10,8 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class DriveSubsystemTalonSRX extends SubsystemBase {
+public class DriveSubsystemTalonSRX extends DriveSubsystem {
   /** Creates a new SparkMax brushless motor */
   private TalonSRX m_leftLeaderMotor;
   private TalonSRX m_leftFollowerMotor;
