@@ -12,8 +12,12 @@ import frc.robot.subsystems.DriveSubsystemTalonSRX;
 
 import java.util.function.DoubleSupplier;
 
+import dev.doglog.DogLog;
+import dev.doglog.DogLogOptions;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -32,11 +36,12 @@ public class RobotContainer {
   // private final DriveSubsystem m_driveSubsystem = new DriveSubsystemTalonSRX();
 
   // Creates the Joystick controller to drive the robot
-  Joystick m_joystick = new Joystick(0);
+  // Joystick m_joystick = new Joystick(0);
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    configureLogging();
     // Configure the trigger bindings
     configureBindings();
   }
@@ -90,6 +95,15 @@ public class RobotContainer {
 
     Trigger aimAtLimelightButton = new JoystickButton(leftJoystick, 3);
     aimAtLimelightButton.whileTrue(aimAtLimelightCommand);
+  }
+
+  public void configureLogging() {
+    // Configure logging
+    DogLog.setOptions(
+      new DogLogOptions().withNtPublish(true).withCaptureDs(true)
+    );
+
+    DogLog.setPdh(new PowerDistribution());
   }
 
   
